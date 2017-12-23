@@ -105,6 +105,34 @@ app.directive("runoobDirective", function() {
 
 	应用状态，ng-model指令可以为应用数据提供状态值(invalid，dirty，touched，error)
 	
+2017-12-22
+	angularJs作用域
+	scope当作参数传入。$scope是一个JavaScript对象。
+	控制器中的属性需要添加$scope前缀，HTML中的属性不需要，直接使用表达式即可。
+
+	angularJS应用组成是mvc
+	view，视图，HTML
+	model,模型，当前视图中可用的数据，就是变量和表达式？
+	controller，控制器，JavaScript
+	修改了视图中的变量，在控制器中的对应变量也会受影响，用于交互。
+	可以定义一个根作用域$rootScope,同scope一样作为参数传入。
+
+	控制器也是一个JavaScript对象，可以写在外部文件然后引用。
+	控制器很多使用用在定义和初始化变量，甚至用来定义和调用方法。
 
 
+	过滤器，使用|连接
+	过滤器			描述
+	currency	格式化数字为货币格式。
+	filter		从数组项中选择一个子集。
+	lowercase	格式化字符串为小写。
+	orderBy		根据某个表达式排列数组。
+	uppercase	格式化字符串为大写。
+	可以在表达式中使用，例如将表达式中的所有字符变成大写字母，可以这样写：{{var | uppercase}}
+	也可以在指令中使用，实现类似于sql的orderby功能，当然，也可以筛选。
+	通过自定义的filter，可以实现筛选。
+
+
+	使用服务
+	angularJS内建的服务可以通过类似$scope的参数传递到controller里面去，也是一个JavaScript对象。
 
