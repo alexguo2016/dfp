@@ -1,0 +1,28 @@
+理解jQuery的设计
+$()返回的是一个jquery对象，jQuery操作的不再是HTML的DOM对象。
+jQuery中有很多改变自身的方法，返回的是对象本身。
+
+xpath语法
+表达式	描述
+nodename	选取此节点的所有子节点。
+/	从根节点选取。
+//	从匹配选择的当前节点选择文档中的节点，而不考虑它们的位置。
+.	选取当前节点。
+..	选取当前节点的父节点。
+@	选取属性。
+
+$(document).ready(callback)  and $.holdReady(boolean)
+$(document).ready(callback)是在页面加载完之后实行callback函数，如果在这之前，设定$.holdReady(true),则加载完页面之后并不会立即实行callback,必须在$.holdReady(false)之后才会执行，例如设置了window.setTimeOut("$.holdReady(false)",2000)则是在页面加载完2000毫秒之后再执行callback函数。
+同时，如果这样写
+$.holdReady(true);
+$.getScript("aaa.js",function(){
+	$.holdReady(false);
+});
+则是在加载了aaa.js之后才回执行$(document).ready();
+
+$("选择器").get() 返回jquery里对应的DOM数组
+$("选择器").get(index) 返回对应数组里面的第index + 1个DOM
+
+P75 2018-2-21
+
+
