@@ -1,0 +1,140 @@
+事件驱动，观察者模式
+emit-->发表
+
+引入events模块
+var events = require('events')
+var eventEmitter = new events.EventEmitter()
+绑定事件以及事件的处理程序
+eventEmitter.on('eventName', eventHandler)
+触发事件
+eventEmitter.emit('eventName')
+
+node.js中，参数都是err先行，例如这样
+var fs = require("fs");
+fs.readFile('input.txt', function (err, data) {
+   if (err){
+      console.log(err.stack);
+      return;
+   }
+   console.log(data.toString());
+});
+console.log("程序执行完毕");
+/************/
+/************/
+/************/
+/************/
+node.js中的EventEmitter
+在每次异步IO操作完成时，都会发送一个事件到事件队列，node.js中很多对象都会分发事件，例如打开文件等等，所有这些产生事件的对象都是events.eventEmitter的实例
+
+events模块只有一个对象，events.eventEmitter，其核心就是事件触发和事件监听功能的封装，类似于js的addEventListener??因为无法交互，所以触发的语句是event.emit('some_event')
+
+可以注册多个事件监听器。
+调用的时候按照注册的先后顺序。
+
+EventEmitter的属性介绍
+实例的方法如下：
+1、addListener(event, listener)
+    添加监听器到监听器数组的尾部
+2、on(event, listener)
+    注册一个监听器，接受字符串evnet和一个回调函数
+3、once(event, listener)
+    注册一个但此监听器，触发之后立即解除
+4、removeListener(event, listener)
+    移除事件监听器
+5、removeAllListener([event])
+    移除所有事件的所有监听器，如果[event]不为空，则移除event的所有事件监听器
+6、setMaxListeners(n)
+    默认n=10，如果监听器数量超过n，则输出警告信息
+7、listeners(event)
+    返回指定事件的监听器数组
+8、emit(event, [arg1], [arg2],...)
+    按照参数的顺序执行每个监听器，如果事件有注册监听则返回true,否则返回false
+
+类方法如下
+1、listenerCount(emitter, event)
+    返回指定事件(emitter)的监听器数量
+
+事件
+1、newListener
+    event--字符串，事件名称
+    listener--处理事件函数
+    再添加新监听器的时候触发
+2、removeListener
+    event--字符串
+    listener-->事件函数
+
+error事件
+包含错误的语义，如果error被触发且没有相应的监听器，node.js会把他当作异常。一般需要为error事件设置监听器，防止在遇到错误后整个程序崩溃。
+var events = require('events')
+var emitter = new events.EventEmitter()
+emitter.addListener('error', function() {
+    console.log('this is a  error test')
+})
+emitter.emit('error')
+
+继承EventEmitter
+大多数时候，我们不会直接使用EventEmitter，而是再对象中继承它，如fs，net，http在内，只要是支持事件响应的核心模块都是EventEmitter的子类。
+/************/
+/************/
+/************/
+/************/
+Node.js Buffer(缓冲区)
+JavaScript语言自身只有字符串类型，如果需要处理TCP流或者文件流的时候，必须使用二进制数据，这个时候就要使用Buffer类作为专门存放二进制数据的缓冲区。
+例子
+/*
+const buf = Buffer.from('runoob', 'ascii');
+// 输出 72756e6f6f62
+console.log(buf.toString('hex'));
+// 输出 cnVub29i
+console.log(buf.toString('base64'));
+*/
+目前支持的字符编码包括
+ascii
+utf8
+base64
+latin1(binary)
+hex
+等等
+一般操作有
+1、创建Buffer类
+    Buffer.alloc(size[, fill[, encoding]])： 返回一个指定大小的 Buffer 实例，如果没有设置 fill，则默认填满 0
+    Buffer.allocUnsafe(size)： 返回一个指定大小的 Buffer 实例，但是它不会被初始化，所以它可能包含敏感的数据
+    Buffer.allocUnsafeSlow(size)
+    Buffer.from(array)： 返回一个被 array 的值初始化的新的 Buffer 实例（传入的 array 的元素只能是数字，不然就会自动被 0 覆盖）
+    Buffer.from(arrayBuffer[, byteOffset[, length]])： 返回一个新建的与给定的 ArrayBuffer 共享同一内存的 Buffer。
+    Buffer.from(buffer)： 复制传入的 Buffer 实例的数据，并返回一个新的 Buffer 实例
+    Buffer.from(string[, encoding])： 返回一个被 string 的值初始化的新的 Buffer 实例
+2、写入缓冲区
+    buf.write(string[, offset[, length]][, encoding])
+3、从缓冲区读取数据
+    buf.toString([encoding[, start[, end]]])
+    encoding-->使用的编码，默认'utf8'
+4、将Buffer转换为JSON对象
+    buf.toJSON()
+5、缓冲区合并
+    Buffer.concat(list[, totalLength])
+6、缓冲区比较
+    buf.compare(otherBuffer);
+7、拷贝缓冲区
+    buf.copy(targetBuffer[, targetStart[, sourceStart[, sourceEnd]]])
+8、缓冲区裁剪
+    buf.slice([start[, end]])
+    end 默认是buf.length
+9、缓冲区长度
+    buf.length;
+/************/
+/************/
+/************/
+/************/
+Node.js Stream(流)
+需要requier('fs')作为前置
+有四种类型的流
+1、Readable
+2、Writable
+3、Duplex-->可读可写
+4、Transform-->操作被写入数据，然后读出结果
+所有的Stream都是EventEmitter对象的实例，常用的事件有
+1、data-->当有数据可读的时候触发
+2、end-->没有更多数据可以读取的时候触发
+3、error-->再接收和写入过程中发生错误时触发
+4、finish-->所有数据已被写入到底层系统时触发
