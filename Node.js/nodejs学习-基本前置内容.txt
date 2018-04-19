@@ -169,3 +169,154 @@ console.log('done')
 /************/
 模块系统
 exports，模块内将需要输出的东西exports，引用模块的时候，使用require并新建一个对应的对象即可。
+
+模块接口
+module.exports,定义模块文件的时候定义的是类，引用文件后，生成这个类的一个实例，然后使用类的方法。
+/*
+//hello.js
+function Hello() {
+    var name;
+    this.setName = function(thyName) {
+        name = thyName;
+    };
+    this.sayHello = function() {
+        console.log('Hello ' + name);
+    };
+};
+module.exports = Hello;
+//main.js
+var Hello = require('./hello');
+hello = new Hello();
+hello.setName('BYVoid');
+hello.sayHello();
+*/
+/************/
+/************/
+/************/
+/************/
+Node.js 函数
+使用和JavaScript类似。
+/************/
+/************/
+/************/
+/************/
+Node.js路由
+我们所需要的数据都包含再request对象中，作为onRequest()回调函数的第一个参数传递。
+解析数据的时候，需要额外的Node.js模块，分别是url和querystring模块。
+/*
+            url.parse(string).query
+                                |
+url.parse(string).pathname      |
+            |                   |
+            |                   |
+            ------ -------------------
+http://localhost:8888/start?foo=bar&hello=world
+                             ---       -----
+                              |          |
+                              |          |
+      querystring.parse(queryString)["foo"]    |
+                                         |
+             querystring.parse(queryString)["hello"]
+*/
+写一个服务器文件hello.js
+/*
+var http = require('http')
+var url = require('url')
+
+var start = function() {
+    function onRequest(request, response) {
+        var pathname = url.parse(request.url).pathname
+        console.log(`request for ${pathname} received`)
+        response.writeHead(200, {'Content-Type': 'text/pain'})
+        response.write('this is a test')
+        response.end()
+    }
+    http.createServer(onRequest).listen(8888)
+    console.log('server is started')
+}
+
+exports.start = start
+*/
+一个路由文件route.js
+/*
+function route(pathname) {
+    console.log('about to route a request for ' + pathname)
+}
+
+exports.route = route
+*/
+执行文件index.js
+/*
+var server = require("./hello");
+var route = require("./route");
+
+server.start(route.route);
+*/
+/************/
+/************/
+/************/
+/************/
+Node.js 全局对象global
+所有的全局变量都是global的对象属性
+_filename
+    表示当前正在执行的脚本的文件名
+_dirname
+    表示当前执行脚本所在的目录
+setTimeout(callback, ms)
+clearTimeout(index)
+setInterval(callback, ms)
+clearInterval(index)
+    和JavaScript类似
+console方法，和JavaScript类似
+    console.log-->通常的log
+    console.info-->返回的消息前面多一个蓝色感叹号
+    console.err-->输出错误信息，显示红色x
+    console.warn-->警告信息，黄色感叹号
+    console.dir-->对对象进行检查
+    console.time(label)-->输出时间，表示时间开始
+    console.timeEnd(label)-->输出事件，表示时间结束
+    console.trace(message[,...])-->当前代码在堆栈中的调用路径
+process
+    表示Node.js进程状态的对象
+    成员方法
+    1、exit
+        当进程准备退出时触发。
+    2、beforeExit
+        当 node 清空事件循环，并且没有其他安排时触发这个事件。由于监听器可能是异步，所以结果可能有所不同
+    3、uncaughtException
+        当一个异常冒泡回到事件循环，触发这个事件。默认的操作不会触发。
+    4、Signal 事件
+        当进程接收到信号时就触发。
+/*
+process.on('exit', function(code) {
+
+  // 以下代码永远不会执行，因为是异步，回调函数还没执行，程序就退出了
+  setTimeout(function() {
+    console.log("该代码不会执行");
+  }, 0);
+
+  console.log('退出码为:', code);
+});
+console.log("程序执行结束");
+*/
+/************/
+/************/
+/************/
+/************/
+Node.js常用工具
+util，Node.js的核心模块，用于补强JavaScript的功能，使用之前需要require('util')作为前置
+1、util.inherits
+    实现对象之间原型继承的函数
+    util.inherits(Sub, Base)-->相当于Java的Sub extends Base
+2、util.inspect
+    util.inspect(object,[showHidden],[depth],[colors])是一个将任意对象转换 为字符串的方法，通常用于调试和错误输出
+    <-->特别要指出的是，util.inspect 并不会简单地直接把对象转换为字符串，即使该对 象定义了toString 方法也不会调用。
+    其实和在浏览器中使用console.dir()作用类似
+3、util.isArray(object)
+    判断是否一个数组
+4、util.isRegExp(object)
+    正则
+5、util.isDate(object)
+    日期
+6、util.isError(object)
+    错误对象

@@ -1,0 +1,14 @@
+Node.js 文件系统
+http://www.runoob.com/nodejs/nodejs-fs.html
+使用之前require('fs')
+模块中的方法都拥有同步和异步的不同版本，例如读取文件内容的函数有异步的 fs.readFile() 和同步的 fs.readFileSync()。
+异步的方法函数最后的参数是回调函数，异步更快，不阻塞。
+/**********/
+/**********/
+/**********/
+/**********/
+Node.js GET/POST请求
+http://www.runoob.com/nodejs/node-js-get-post.html
+
+后面继续
+2018-4-19 14：00
