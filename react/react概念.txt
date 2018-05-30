@@ -1,0 +1,76 @@
+react、state、props、生命周期、virtual dom、render
+主要资料
+1、阮一峰React入门实例教程
+    http://www.ruanyifeng.com/blog/2015/03/react.html
+2、如何理解虚拟DOM?
+    https://www.zhihu.com/question/29504639
+3、菜鸟教程 React教程
+    http://www.runoob.com/react/react-tutorial.html
+4、《React快速上手开发》
+    ISBN 978-7-115-44773-9
+5、课件
+
+
+注意事项：
+在React中，class、for、style这几个DOM属性不能直接在JavaScript中使用，应该是className、htmlFor、style相对应的JavaScript对象
+React的事件处理使用的是事件委托，只是看起来样子很像内联事件处理器
+
+
+React
+1.声明式设计 −React采用声明范式，可以轻松描述应用。
+2.高效 −React通过对DOM的模拟，最大限度地减少与DOM的交互。
+3.灵活 −React可以与已知的库或框架很好地配合。
+4.JSX − JSX 是 JavaScript 语法的扩展。React 开发不一定使用 JSX ，但我们建议使用它。
+5.组件 − 通过 React 构建组件，使得代码更加容易得到复用，能够很好的应用在大项目的开发中。
+6.单向响应的数据流 − React 实现了单向响应的数据流，从而减少了重复代码，这也是它为什么比传统数据绑定更简单。
+
+组件化
+所需要的功能都可以像在编写JavaScript一样，写成一个个可以复用的组件，使用的时候只需要引入文件以及传入相应的参数即可
+
+
+
+state
+在React里面，组件被看作一个状态机。state是一个对象，{}。
+有初始状态，如果用户和组件互动而导致状态变化，就会触发重新渲染组件。
+
+通过getInitialState: function() {return {xxx}}来设定初始状态
+通过例如Onchange: function(event) {this.setState({xxx})}来改变状态
+
+state和props都是用于描述组件的特性，区别是props类似于函数参数，函数定义或者使用的时候，并不会被改变，state则是内部变量，会因为程序不同时间或者不同的操作发生改变
+
+
+props
+组件的属性
+一般是this.props对象，注意，是一个对象，应该使用{}
+例如<Com name="test" />, {this.props.name}读取出来的就是"test",使用的时候类似于函数的传参
+
+里面需要注意的一个属性是this.props.children，它表示组件的所有子节点，可以使用它的map方法对每一个子节点进行操作
+
+组件属性可以通过React.PropTypes.xxx来设定其参入的类型和限制
+
+使用getDefaultProps()方法返回一个预定义的对象，可以为一些可选属性(不带.isRequired)提供默认值
+
+
+生命周期
+生命周期分为3个状态
+Mounting 插入真实DOM，will，did，在组件被加载的时候触发
+Updating 正在重新渲染，will，did，在组件state被改变，重新渲染的时候被触发
+Unmounting 移出真实DOM
+还有2还有2种特殊状态
+componentWillReceiveProps(obj nextProps) 已加载组件，收到新的参数时调用
+shouldComponentUpdate(obj nextProps, obj nextState) 判断是否重新渲染时调用，可以用来忽略一些不必要的渲染，提高性能。
+
+
+virtual dom
+使用JavaScript来模拟DOM树。
+在virtual dom发生变化完成之后，用新渲染的对象树和旧的树进行对比，记录差异，将差异体现在真正的DOM上，减少重排的次数，提高性能。
+本质是在JavaScript和DOM之间做了一个缓存。
+
+diff算法
+只会对同一层级的元素进行对比,时间复杂度为O(n)。如果完全对比，时间复杂度为O(n^3)
+在实际的代码中，会对新旧两棵树进行一个深度优先的遍历，每个节点会有一个唯一的标记
+由于tagName可以重复，所以每个节点应该加上唯一标识的ID，一般是currentTime(毫秒数)
+
+
+render
+如果组件的state发生变化，render则会被执行，页面被重新渲染。
