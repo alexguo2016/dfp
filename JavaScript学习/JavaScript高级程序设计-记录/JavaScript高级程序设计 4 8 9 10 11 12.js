@@ -100,17 +100,18 @@ BOM
         2.位置操作
             location.assign(url)方法, 传递一个url, 立刻打开该url并且再浏览器的历史记录中生成一条记录
             注意: 每次修改location的属性, 除了hash属性之外, 页面都会重新加载url
-        3.navigator对象
-            用于识别客户端浏览器
-            检测插件以及注册处理程序等等
-        4.screen对象
-            用处不大, 只是用来表明客户端的能力
-        5.history对象
-            浏览器历史
-            history.go(url)-->转到url
-            history.back()-->后退
-            history.forward()-->前进
     }
+    
+    3.navigator对象
+    用于识别客户端浏览器
+    检测插件以及注册处理程序等等
+    4.screen对象
+    用处不大, 只是用来表明客户端的能力
+    5.history对象
+    浏览器历史
+    history.go(url)-->转到url
+    history.back()-->后退
+    history.forward()-->前进
 }
 
 

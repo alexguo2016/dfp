@@ -93,7 +93,7 @@ Ajax与Comet
 
         XMLHttpRequest二级
         {
-            FormData()对象
+            FormData对象
             var data = new FormData()
             data.append("age", "55")
             创建一个表单对象, 并且插入了一条内容, 也可以从页面中选择的forms数组中找一条添加进去, 例如
