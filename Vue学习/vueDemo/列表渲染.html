@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>列表渲染</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    </head>
+    <body>
+        <ul id='app1'>
+            <li v-for="value in object">
+                {{value}}
+            </li>
+        </ul>
+        <script type="text/javascript">
+            var app1 = new Vue({
+                el: '#app1',
+                data: {
+                    object: {
+                        firstName: 'John',
+                        lastName: 'Tatter',
+                        age: '30',
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>

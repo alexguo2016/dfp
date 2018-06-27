@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>模版语法</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    </head>
+    <body>
+        <div class="" id='app1'>
+            <p>Using mustaches: {{rawHTML}}</p>
+            <p>Using v-html directive: <span v-html="rawHTML">this is a HTML element</span></p>
+        </div>
+        <script type="text/javascript">
+            var app1 = new Vue({
+                el: '#app1',
+                data: {
+                    rawHTML: '<a href="www.baidu.com">this is a link</a>'
+                },
+            })
+        </script>
+        <hr>
+        <div class="app2" id='app2' v-bind:id='dynamicId'>
+            {{dynamicId}}
+            {{msg}}
+        </div>
+        <script type="text/javascript">
+            var app2 = new Vue({
+                el: '.app2',
+                data: {
+                    dynamicId: '333',
+                    msg: 'this is message',
+                },
+            })
+        </script>
+    </body>
+</html>

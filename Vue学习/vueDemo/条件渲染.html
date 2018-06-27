@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>条件渲染</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    </head>
+    <body>
+        <div class="" id="app1">
+            <div class="" v-show="show">
+                <div class="">
+                    show div
+                </div>
+                <span>
+                    show span
+                </span>
+            </div>
+            <button v-on:click='toggle'>change</button>
+        </div>
+        <script type="text/javascript">
+            var app1 = new Vue({
+                el: '#app1',
+                data: {
+                    show: true,
+                },
+                methods: {
+                    toggle: function() {
+                        this.show = !this.show
+                    }
+
+                }
+            })
+        </script>
+
+    </body>
+</html>

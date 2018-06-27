@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    </head>
+    <body>
+        <div class="" id = 'app1'>
+            <p>original Message: "{{message}}"</p>
+            <p>computed reversed Message: "{{reversedMessage}}"</p>
+        </div>
+        <script type="text/javascript">
+            var app1 = new Vue({
+                el: '#app1',
+                data: {
+                    message: 'Hello',
+                },
+                computed: {
+                    reversedMessage: function() {
+                        var result = this.message
+                        result = result.split('').reverse().join('')
+                        return result
+                    }
+                }
+            })
+        </script>
+        <hr>
+        <div class="" id = 'app2'>
+            {{fullName}}
+        </div>
+        <script type="text/javascript">
+            var app2 = new Vue({
+                el: '#app2',
+                data: {
+                    firstName: 'Alex',
+                    lastName: 'Guo',
+                    fullName: 'Alex Guo',
+                },
+                watch: {
+                    firstName: function(val) {
+                        this.fullName = val + ' ' + this.lastName
+                    },
+                    lastName: function(val) {
+                        this.fullName = this.firstName + ' ' + val
+                    }
+                }
+            })
+        </script>
+        <hr>
+        计算属性的setter
+
+    </body>
+</html>
