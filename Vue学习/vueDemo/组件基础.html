@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>组件基础</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    </head>
+    <body>
+        <div class="" id = 'app1'>
+            <Mybutton></Mybutton>
+        </div>
+        <script type="text/javascript">
+            Vue.component('Mybutton', {
+                data: function() {
+                    return {
+                        count: 0
+                    }
+                },
+                template: '<button v-on:click="count++">you have click {{count}} times</button>'
+            })
+            var app1 = new Vue({
+                el: '#app1',
+
+            })
+        </script>
+    </body>
+</html>

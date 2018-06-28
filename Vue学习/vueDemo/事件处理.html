@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>列表渲染</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    </head>
+    <body>
+        <div class="" id='app1'>
+            <button type="button" name="button" v-on:click="addNumber">增加</button>
+            <p>the number is {{number}}</p>
+        </div>
+        <script type="text/javascript">
+            var app1 = new Vue({
+                el: '#app1',
+                data: {
+                    number: 0,
+                },
+                methods: {
+                    addNumber: function() {
+                        this.number++
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
