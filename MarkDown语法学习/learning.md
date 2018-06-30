@@ -133,3 +133,10 @@ x \href{why-equal.html}{=} y^2 + 1
 $$
 
 atom本身可能没有 Mathjax, 所以显示不出来
+
+todo
+==
+- [ ] a bigger project
+    - [x] first step
+    - [ ] second step
+- [ ] next bigger project
