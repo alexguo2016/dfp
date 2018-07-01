@@ -6,107 +6,49 @@
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     </head>
     <body>
-        <div id="app1">
-            <MyCom></MyCom>
-            <div class="">
-                {{test}}
-            </div>
-        </div>
-
-        <div class="" id = 'app2'>
-            <child msg='myName'></child>
+        <div class="" id = 'app1'>
+            <a v-bind="{href:'http://www.baidu.com/search/question/' + id}">这是一个链接</a>
         </div>
         <script type="text/javascript">
-            var log = console.log.bind(console)
-            var MyCom = Vue.extend({
-                template: '<div>my first component</div>',
-                replace: true
-            })
-            Vue.component('MyCom', MyCom)
             var app1 = new Vue({
                 el: '#app1',
                 data: {
-                    test: 'testStr'
+                    id: 1
                 }
             })
-
-            Vue.component('child', {
-                props: ['msg'],
-                template: '<span>{{msg}}</span>'
-                })
-            var app2 = new Vue({
-                el: '#app2',
-
-            })
-
         </script>
-<hr>
-        <div class="" id = 'app3'>
-            <parent-comp></parent-comp>
+
+        <div class="" id = 'app2'>
+            {{ time | dateFormat }}
+            <br>
+            {{ time | myTimeFormat }}
         </div>
         <script type="text/javascript">
-            var Child = Vue.extend({
-                props: ['childProps'],
-                template: '<div> {{childProps}} is shown</div>',
-                replace: true
+            Vue.filter('myTimeFormat', function(input) {
+                var day = input.getDay() + 1
+                var year = input.getFullYear()
+                var month = input.getMonth() + 1
+                return `
+                    ${year}*****${month}*****${day}
+                `
             })
-
-            var Parent = Vue.extend({
-                template: `
-                <div>
-                    <p>i am parent</p>
-                    <br>
-                    <child :child-props="hello"></child>
-                </div>
-                `,
-                data: function() {
-                    return {'hello': 'yetti,'}
+            var app2 = new Vue({
+                el: '#app2',
+                data: {
+                    time: new Date()
                 },
-                components: {
-                    'child': Child,
-                }
-            })
-
-            var app3 = new Vue({
-                el: '#app3',
-                components: {
-                    'parent-comp': Parent
+                filters: {
+                    dateFormat: function(input) {
+                        //注意, input指的是 | 前面的变量
+                        var day = input.getDay() + 1
+                        var year = input.getFullYear()
+                        var month = input.getMonth() + 1
+                        return `
+                            ${year}--${month}--${day}
+                        `
+                    }
                 }
             })
         </script>
-<hr>
-<div id = 'app4'>
-    <input type="text" v-model = 'test.name'>
-    <div class="" >
-        {{info.name}}
-    </div>
-    <info v-bind:msg='test'></info>
-</div>
-<script type="text/javascript">
-    var app4 = new Vue({
-        el: '#app4',
-        data: function() {
-            return {
-                info: {
-                    name: '你的快递'
-                },
-                test: {
-                    name: '测试'
-                }
-            }
-        },
-        components: {
-            'info': {
-                props: ['msg'],
-                template: `
-                    <div>{{ msg.name }} 额外的信息</div>
-                `
-            }
-        }
-    })
-</script>
-<hr>
-
-
     </body>
 </html>
