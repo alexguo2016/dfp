@@ -6,78 +6,107 @@
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     </head>
     <body>
-        <div class="" id = 'app1'>
-            <Mybutton></Mybutton>
-            <Mybutton></Mybutton>
-            <Mybutton></Mybutton>
+        <div id="app1">
+            <MyCom></MyCom>
+            <div class="">
+                {{test}}
+            </div>
+        </div>
+
+        <div class="" id = 'app2'>
+            <child msg='myName'></child>
         </div>
         <script type="text/javascript">
-            Vue.component('Mybutton', {
-                data: function() {
-                    return {
-                        count: 0
-                    }
-                },
-                template: '<button v-on:click="count++">you have click {{count}} times</button>'
+            var log = console.log.bind(console)
+            var MyCom = Vue.extend({
+                template: '<div>my first component</div>',
+                replace: true
             })
+            Vue.component('MyCom', MyCom)
             var app1 = new Vue({
                 el: '#app1',
-
-            })
-        </script>
-        <hr>
-        <div id = "app2">
-            <blog-post title = 'My journey with Vue' name = 'MyName'></blog-post>
-            <blog-post title = 'test 2'></blog-post>
-            <blog-post title = 'this is a test'></blog-post>
-        </div>
-
-        <script type="text/javascript">
-            Vue.component('blog-post', {
-                props: ['title', 'name'],
-                template: '<h3>{{name}} {{title}}</h3>'
+                data: {
+                    test: 'testStr'
+                }
             })
 
+            Vue.component('child', {
+                props: ['msg'],
+                template: '<span>{{msg}}</span>'
+                })
             var app2 = new Vue({
                 el: '#app2',
+
             })
+
         </script>
-        <hr>
-        <div id="blog-posts-events-demo">
-          <div :style="{ fontSize: postFontSize + 'em' }">
-            <blog-post
-              v-for="post in posts"
-              v-bind:key="post.id"
-              v-bind:post="post"
-              v-on:enlarge-text="postFontSize += 0.1"
-            ></blog-post>
-          </div>
+<hr>
+        <div class="" id = 'app3'>
+            <parent-comp></parent-comp>
         </div>
         <script type="text/javascript">
-        Vue.component('blog-post', {
-            props: ['post'],
-            template: `
-            <div class="blog-post">
-              <h3>{{ post.id }}--{{ post.title }}</h3>
-              <button v-on:click="$emit('enlarge-text')">
-                Enlarge text
-              </button>
-              <div v-html="post.content"></div>
-            </div>
-            `
+            var Child = Vue.extend({
+                props: ['childProps'],
+                template: '<div> {{childProps}} is shown</div>',
+                replace: true
             })
-            new Vue({
-              el: '#blog-posts-events-demo',
-              data: {
-                posts: [
-                    {id: 1, title: 'ddddd'},
-                    {id: 2, title: 'fewafe'},
-                    {id: 3, title: 'ttuhndfghj'},
-                    {id: 4, title: 'uigyui'},
-                ],
-                postFontSize: 1
-              }
+
+            var Parent = Vue.extend({
+                template: `
+                <div>
+                    <p>i am parent</p>
+                    <br>
+                    <child :child-props="hello"></child>
+                </div>
+                `,
+                data: function() {
+                    return {'hello': 'yetti,'}
+                },
+                components: {
+                    'child': Child,
+                }
+            })
+
+            var app3 = new Vue({
+                el: '#app3',
+                components: {
+                    'parent-comp': Parent
+                }
             })
         </script>
+<hr>
+<div id = 'app4'>
+    <input type="text" v-model = 'test.name'>
+    <div class="" >
+        {{info.name}}
+    </div>
+    <info v-bind:msg='test'></info>
+</div>
+<script type="text/javascript">
+    var app4 = new Vue({
+        el: '#app4',
+        data: function() {
+            return {
+                info: {
+                    name: '你的快递'
+                },
+                test: {
+                    name: '测试'
+                }
+            }
+        },
+        components: {
+            'info': {
+                props: ['msg'],
+                template: `
+                    <div>{{ msg.name }} 额外的信息</div>
+                `
+            }
+        }
+    })
+</script>
+<hr>
+
+
     </body>
 </html>
