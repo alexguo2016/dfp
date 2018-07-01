@@ -7,9 +7,9 @@
 除了数据属性, vue实例还暴露了一些有用的实例属性和方法, 前缀为 $
 
 
-实例生命周期钩子
-用于在不同的生命周期中添加自己的代码
-暂时的知道的有:
-created, mouted, updated, destroyed 的beforeXxx和xxxed
-生命周期钩子的this上下文指向调用它的vue实例
+实例生命周期钩子  
+用于在不同的生命周期中添加自己的代码  
+暂时的知道的有:  
+created, mouted, updated, destroyed 的beforeXxx和xxxed  
+生命周期钩子的this上下文指向调用它的vue实例  
 需要特别注意: 不要在选项属性或者回调上面使用箭头函数, 其this指向不是预期的vue实例
