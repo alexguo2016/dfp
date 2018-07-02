@@ -50,5 +50,74 @@
                 }
             })
         </script>
+
+        <div class="" id='app4'>
+            <input class="" v-on:keydown.f2='func'>
+        </div>
+        <script type="text/javascript">
+            Vue.config.keyCodes.f2 = 113
+            var app4 = new Vue({
+                el: '#app4',
+                methods: {
+                    func: function() {
+                        console.log('func')
+                    }
+                }
+            })
+        </script>
+        <hr>
+        <style>
+            .myTranstion-enter-active, .myTranstion-leave-active {
+                transition: all 0.4s ease;
+                padding-left: 10px;
+            }
+            .myTransition-enter, .myTransition-leave-active {
+                padding-left: 1000px;
+            }
+        </style>
+        <div class="" id = 'app5'>
+            <button @click="toggle">切换</button>
+            <transition name='myTranstion'>
+                <div class="" v-show='seen'>
+                    message
+                </div>
+            </transtion>
+        </div>
+        <script type="text/javascript">
+            var app5 = new Vue({
+                el: '#app5',
+                data: {
+                    seen: false,
+                },
+                methods: {
+                    toggle: function() {
+                        this.seen = !this.seen
+                    }
+                }
+            })
+        </script>
+        <hr>
+
+        <template id='myLogin'>
+            <div class="">
+                <a href="#">登录</a>--<a href="#">注册</a>
+            </div>
+        </template>
+        <div class="" id = 'app6'>
+            <login></login>
+            <br>
+            <span>{{msg}}</span>
+        </div>
+        <script type="text/javascript">
+            Vue.component('login', {
+                template: '#myLogin'
+            })
+            var app6 = new Vue({
+                el: '#app6',
+                data: {
+                    msg: 'dadadada',
+                }
+            })
+        </script>
     </body>
 </html>
