@@ -1,3 +1,6 @@
+基础部分
+===
+
 ## Vue实例 ##
 ### 创建一个新实例 ###
 所有的Vue应用都是Vue实例, 所有的Vue组件都是Vue的实例  
@@ -385,12 +388,13 @@ data: {
 
 ### 通过事件向父级组件发送消息 ###
 $emit方法, 向父组件触发一个事件, 属于Vue实例的自定义事件系统的一个方法, 例子如下  
+总的来说, 就是子组件$emit父组件的方法, 父组件的这个方法监听子组件, 改变父组件中的属性  
 ```html
 <div class="" id='com2'>
     <div class="" :style="{fontSize: postFontSize + 'em'}">
         <blog-test v-for='d in props'
         v-bind:k='d'
-        v-on:larger="function() {postFontSize += 0.1}"
+        v-on:larger="postFontSize += 0.1"
         ></blog-test>
         <!-- bind后面的k指的是组件的props -->
         <br>
@@ -440,4 +444,290 @@ $emit方法, 向父组件触发一个事件, 属于Vue实例的自定义事件�
         },
     })
 </script>
+```
+
+### 使用事件抛出一个值 ###
+$emit的第二个参数, 可以提供被emit的函数的参数, 这个参数被$event在父组件中被访问  
+```html
+<!-- 父组件 -->
+<blog-test v-for='d in props'
+v-bind:k='d'
+v-on:larger="postFontSize += $event"
+></blog-test>
+<!-- 子组件 -->
+<button type="button" name="button"
+v-on:click="$emit('larger', 0.2)"
+>larger</button>
+```
+
+### 在组件上使用v-model ###
+v-model是一个语法糖, 内部原理如下  
+```html
+<input v-model='myText'>
+<!-- 等价于 -->
+<input
+v-bind:value='myText'
+v-on:input='myText = $event.target.value'
+>
+```
+
+如果在组件中使用v-model, 则相当于下面  
+```html
+<custom-input
+v-bind:value='myText'
+v-on:input='myText = $event'
+></custom-input>
+```
+```javascript
+Vue.component('custom-input', {
+    props: ['value'],
+    template: `
+        <input
+            v-bind:value='value'
+            v-on:input='$emit("input", $event.target.value)'
+        >
+    `
+})
+```
+```html
+<!-- 使用组件 -->
+<div class="" id='com5'>
+    <custom-input v-model='myText'></custom-input>
+    <h2>输入的内容是</h2>
+    <span>{{myText}}</span>
+</div>
+<script type="text/javascript">
+    Vue.component('custom-input', {
+        props: ['value'],
+        template: `
+            <input
+                v-bind:value='value'
+                v-on:input='$emit("input", $event.target.value)'
+                //关键在这里
+            >
+            <br>
+
+        `
+    })
+
+    var com5 = new Vue({
+        el: '#com5',
+        data: {
+            // myText: 'sss'
+        },
+        props: ['myText']
+    })
+</script>
+```  
+
+### 通过插槽分发内容 ###
+使用Vue自定义的 slot 元素  
+```javascript
+Vue.component('alert-box', {
+    template: `
+        <div class='demo-alert-box'>
+            <strong>Error</strong>
+            <slot></slot>
+        </div>
+    `
+})
+```
+
+### 动态组件 ###
+组件切换, 使用 component 元素的 特殊的 is 特性来实现  
+```html
+<component v-bind:is="currentTabComponent"></component>
+<!-- 组件会在currentTabComponent改变时改变 -->
+```
+
+### 解析DOM模版时的注意事项 ###
+注意表单元素内部的元素, 如果需要变通, 可以使用is特性  
+
+---
+
+深入了解组件
+==
+## 组件注册 ##
+### 组件名 ###
+强烈建议遵循W3C的规范: 字母全小写, 必须包含一个连字符  
+
+### 全局注册 ###
+```javascript
+Vue.component('xxx-yyy', {
+
+})
+```
+
+### 局部注册 ###
+如果使用webpack类似的构建系统, 使用全局注册的组件会导致用户下载了不必要的JavaScript  
+可以通过一个普通的JavaScript对象来定义组件  
+```javascript
+var ComponentA = {
+    // 内容
+}
+var ComponentB = {
+    // 内容
+}
+var ComponentC = {
+    // 内容
+}
+```
+然后在Vue实例中的components选项中定义你自己想要使用的组件  
+```javascript
+new Vue({
+    el: '#app',
+    data: {},
+    components: {
+        'component-a': ComponentA,
+        'component-b': ComponentB,
+    }
+})
+```
+
+需要注意的是, <b>局部注册的组件在其子组件中</b>不可用, 如果需要嵌套使用, 那么需要这样  
+```javascript
+var ComponentA = { /* ... */ }
+var ComponentB = {
+  components: {
+    'component-a': ComponentA
+  },
+  // ...
+}
+```
+
+### 模块系统 ###
+暂时略过  
+
+## Prop ##
+### prop的大小写 ###
+由于HTML的特性名是大小写不敏感的, 在使用DOM中的模版时, 驼峰命名法要换成短横线分隔命名  
+
+### prop类型 ###
+之前使用的prop都是字符串类型, 如果需要指定类型, 可以这样  
+```javascript
+props: {
+    title: String,
+    likes: Number,
+    isPublished: Boolean,
+    commentIds: Array,
+    author: Object,
+}
+```
+
+### 传递静态或动态prop ###
+```html
+<my-blog title='this is a blog'></my-blog>
+<!-- 传递静态的值 -->
+```
+
+```html
+<my-blog v-bind:title='post.title'></my-blog>
+<!-- 通过v-bind传递一个变量的值, 动态赋值 -->
+```
+
+上面都是传入字符串的情况, 如果需要传入其他类型的值, 有一些细微的不同  
+- 传入数字
+    ```html
+    <my-blog v-bind:likes='42'></my-blog>
+    <my-blog v-bind:likes='post.likes'></my-blog>
+    <!-- 无论是静态或者动态, 都需要使用v-bind -->
+    ```
+
+- 传入布尔值
+    ```html
+    <my-blog is-published></my-blog>
+    <!-- 包含该prop没有值的情况, 都表示 true -->
+
+    <!-- 如果使用v-bind, 则需要表明 'false', 这是一个表达式, 不是一个字符串, 来表示 false -->
+    <my-blog v-bind:is-published='false'></my-blog>
+
+    <!-- 变量版本 -->
+    <my-blog v-bind:is-published='post.isPublished'></my-blog>
+    ```
+
+- 传入一个数组
+    ```html
+    <!-- 和传入数字的情况类似, 一定要使用v-bind -->
+    ```
+
+- 传入一个对象
+    ```html
+    <!-- 和数组类似, 使用v-bind, 特别地, 如果是数组或者对象, 静态的例如'[1, 2, 3]'或者'{ age: 33, name: "Alex" }' 都不是字符串, 而是一个表达式 -->
+    ```
+
+- 传入一个对象的所有属性
+    ```html
+    <script type="text/javascript">
+        post: {
+            id: 1,
+            title: 'myFirstBlog'
+        }
+    </script>
+
+    <my-blog v-bind='post'></my-blog>
+    <my-blog v-bind:id='post.id' v-bind:title='post.title'></my-blog>
+    <!-- 上面两个组件完全等价, 有点类似于结构赋值 -->
+    ```
+
+### 单向数据流 ###
+Vue设计为父组件的prop单向下行, 子组件不能反过来影响父组件  
+所以不应该改变子组件中的prop, 如果需要接收prop并且作一系列的操作, 可以有以下两种对应的情形  
+1. prop传递一个初始值, 子组件接下来希望将其作为一个本地的prop数据来使用, 这时候, 最好定义一个子组件的data, 并且复制为prop
+    ```javascript
+    // 子组件的内部设置
+    props: ['initCounter'],
+    data: function() {
+        return {
+            counter: this.initCounter
+        }
+    }
+    ```
+
+2. prop作为原始的值传入并且需要进行转换, 一般使用计算属性
+    ```javascript
+    // 子组件的内部设置
+    props: ['initCounter'],
+    computed: {
+        // 注意, 和子组件的data一样, 都需要返回一个函数, 函数内返回对象
+        formatCounter: function() {
+            return this.initCounter.trim().toLowerCase()
+        }
+    }
+    ```
+
+### props验证 ###
+```javascript
+Vue.component('my-component', {
+  props: {
+    // 基础的类型检查 (`null` 匹配任何类型)
+    propA: Number,
+    // 多个可能的类型
+    propB: [String, Number],
+    // 必填的字符串
+    propC: {
+      type: String,
+      required: true
+    },
+    // 带有默认值的数字
+    propD: {
+      type: Number,
+      default: 100
+    },
+    // 带有默认值的对象
+    propE: {
+      type: Object,
+      // 对象或数组且一定会从一个工厂函数返回默认值
+      default: function () {
+        return { message: 'hello' }
+      }
+    },
+    // 自定义验证函数
+    propF: {
+      validator: function (value) {
+        // 这个值必须匹配下列字符串中的一个
+        return ['success', 'warning', 'danger'].indexOf(value) !== -1
+      }
+    }
+  }
+})
 ```
