@@ -20,8 +20,8 @@ Vue实例中, data对象的属性是响应式的, 这个值发生改变的时候
 
 ## 模版语法 ##
 - 插值  {{ 变量或者表达式 }}
-- 原始HTML <div v-html="变量或者表达式"></div>
-- 特性 <div v-bind:'特性名'='变量或者表达式'></div>
+- 原始HTML ```<div v-html="变量或者表达式"></div>```
+- 特性 ```<div v-bind:'特性名'='变量或者表达式'></div>```
 - 指令 例如下面几种:  
     - v-if, 代表该元素是否被显示
     - v-show, 类似于css里面的visiblity
@@ -338,7 +338,7 @@ data: {
 ### 组件的组织 ###
 树状结构  
 
-### 通过prop向子组建传递数据 ###
+### 通过prop向子组件传递数据 ###
 ```html
 <div class="" id='com2'>
     <div class="">
@@ -731,3 +731,196 @@ Vue.component('my-component', {
   }
 })
 ```
+
+### 非prop的特性 ###
+一个非prop特性是值传向一个组件, 但是改组件并没有相应prop定义的特性.  
+例如  
+```html
+<bootstrap-data-input data-date-picker='activated'></bootstrap-data-input>
+```
+在使用这个组件的时候, data-date-picker='activated'会自动加到子组件上.  
+
+替换/合并已有的特性  
+例如组件的模版中, 设置了class='class1', 而使用组件的时候又设置了class='class2', 一般来说, 都是替换, 但是, Vue对于class和style特殊对待了, 他们的值会被合并起来, 结果是 class='class1 class2'  
+
+禁用特性继承  
+如果不希望组件的根元素继承特性, 可以在组件的选项中设置 inheritAttrs: false, 配合实例的$attr属性, 可以选择性地给子组件传递$attr  
+
+## 自定义事件 ##
+### 事件名 ###
+由于HTML大小写不敏感, 建议使用短划线事件名  
+
+### 自定义组件的v-model ###
+一个组件上的v-model默认会利用prop: value和event: input, 如果在一些例如单选框, 复选框等等类型到输入控件, 可能需要将value特性用于不同目的, 这时候可以使用自定义的v-model来避免冲突, 例如
+```javascript
+// 和默认的v-model一样效果的写法
+Vue.component('mo-ren', {
+    model: {
+        prop: 'value',
+        event: 'input',
+    }
+    props: {
+        // ...
+    }
+})
+
+//自定义的写法
+Vue.component('zi-ding-yi', {
+    model: {
+        prop: 'checked',
+        event: 'change'
+    },
+    props: {
+        checked: Boolean,
+    },
+    template: `
+        <input
+        type = 'checkbox'
+        v-bind:checked='checked'
+        v-on:change="$emit('change', $event.target.checked)"
+        >
+    `
+})
+```
+如果使用了自定义的写法, 在使用组件的时候, 例如
+```html
+<div class="" id = 'app'>
+    <zi-ding-yi  v-model='checked'></zi-ding-yi>
+</div>
+<script type="text/javascript">
+    Vue.component('zi-ding-yi', {
+        model: {
+            prop: 'checked',
+            event: 'change'
+        },
+        props: {
+            checked: Boolean,
+        },
+        template: `
+            <input
+            type = 'checkbox'
+            v-bind:checked='checked'
+            v-on:change="$emit('change', $event.target.checked)"
+            >
+        `
+    })
+
+    var app = new Vue({
+        el: '#app',
+        props: ['checked'],
+        data: {
+            checked: false,
+        }
+    })
+</script>
+```
+'checked'的值将传入checked的prop, 当这个值改变的时候, app.checked的值也相应改变.  
+
+### 将原生事件绑定到组件 ###
+如果想在组件的根元素上监听一个原生事件, 可以使用v-on和.native修饰符  
+```html
+<my-test v-on:focus.native='onFocus'></my-test>
+```
+
+### .sync修饰符 ###
+
+
+## 插槽 ##
+### 插槽内容 ###
+插槽到底是怎么一回事?  
+如果使用了组件, 组件占位符整个都会被替换, 例如
+```html
+<my-com>abcdefg</my-com>
+<!-- abcdefg 并不会被显示出来, 因为整个<my-com>都被替换了, 类似于outerHTML -->
+```
+但是, 如果组件写成这样
+```html
+<my-com>
+    <slot></slot>
+</my-com>
+
+<!-- 假设slot的内容是 abcd, <my-com>的template是 <div>test</div> 渲染的结果是 -->
+<div>
+    testabcd
+<div>
+```
+slot里面可以是任何模版代码, 甚至是其他的组件
+
+### 具名插槽 ###
+如果需要多个插槽, 可以利用slot的name特性, 定义多个slot  
+用法有两个  
+1.
+```html
+<template slot='slot-one'>ssss</template>
+```
+2.
+```html
+<h1 slot='slot-one'>this is a test</h1>
+```
+
+可以保留一个未命名的slot, 作为默认的插槽, 所有不带name属性的<slot>都会被替换成这个默认插槽  
+
+### 插槽的默认内容 ###
+```html
+<button type='submit'>
+    <slot>Submit</slot>
+</button>
+<!-- 默认显示为Submit的button, 用户可以自行更改 -->
+```
+
+### 编译作用域 ###
+父组件模板的所有东西都会在父级作用域内编译；子组件模板的所有东西都会在子级作用域内编译.
+
+### 作用域插槽 ###
+
+
+## 动态组件, 异步组件 ##
+### 在动态组件上使用keep-alive
+用<keep-alive>元素将component包裹起来即可保存状态
+
+### 异步组件 ###
+
+
+## 处理边界情况 ##
+
+
+---
+
+过渡&动画
+===
+
+
+---
+
+可复用性&组合
+===
+
+
+---
+
+工具
+===
+
+---
+规模化
+===
+
+---
+
+深入响应式原理
+===
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+那么data中的firstName会变成
