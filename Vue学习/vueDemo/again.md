@@ -165,7 +165,7 @@ v-on监听DOM事件, 触发时运行JavaScript代码
 ### 鼠标按钮修饰符 ###
 - .left
 - .right
-- . middle
+- .middle
 
 特定响应鼠标的按钮
 
@@ -733,7 +733,7 @@ Vue.component('my-component', {
 ```
 
 ### 非prop的特性 ###
-一个非prop特性是值传向一个组件, 但是改组件并没有相应prop定义的特性.  
+一个非prop特性是值传向一个组件, 但是该组件并没有相应prop定义的特性.  
 例如  
 ```html
 <bootstrap-data-input data-date-picker='activated'></bootstrap-data-input>
