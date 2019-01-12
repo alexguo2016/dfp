@@ -20,6 +20,7 @@ Object.prototype.toString.call(a); // [object, Array]
 
 1. 使用构造函数的时候, 一定使用 new
 1. 创建一个作用域安全的构造函数
+
    ```js
    // 对构造函数里面的 this 绑定做一个判断, 如果 this 指向的是和想要的对象类型一致的对象, 则正常使用, 否则, 使用 new 关键字
    function Cat(name, age) {
@@ -31,10 +32,12 @@ Object.prototype.toString.call(a); // [object, Array]
      }
    }
    ```
+
    这样的 Cat 构造函数无论是使用 new 关键字还是直接调用, 都可以保证 this 的指向, 不会污染 window 对象
 
 当使用借用构造函数的方法实现继承的时候, 会导致一些问题, 例如下面, rect.sides --> undefined, 因为 PG.call(this,2) 里面, this 指向的是 Rect 构造函数, 不是 PG 的实例, 所以, PG.call(this,2) 相当于 return new PG(sides), 和下文中的 this 指向不同, 所以无法将 sides 属性加入到新创建的 Rect 实例中
-```js
+
+````js
 function PG(sides) {
 if (this instanceof PG) {
 this.sides = sides
@@ -56,6 +59,30 @@ return new PG(sides)
 
 如果使用 原型链或者寄生组合继承的方法, 改变 Rect 的 prototype, 则可以实现 sides 属性的正常赋值
 
+### 惰性载入函数, 可以避免执行不必要的代码, 例如 if 分支
+
+只有一个 if 语句的代码, 也肯定比没有 if 语句慢
+惰性载入表示函数执行的分支仅仅会发生一次, 有两种方式实现惰性载入
+1. 在函数被调用的时候再处理函数
+  其实就是动态重写了被调用的函数, 下次调用的时候, 环境一般是不会改变的, 所以其他分支也是没用了
+1. 在声明函数的时候就指定适当的函数
+  创造一个匿名, 自执行的函数
+
+### 函数绑定
+
+创建一个函数, 可以在特定的 this 环境中以指定参数调用另一个函数, 一般和回调函数与时间处理程序一起使用
+
+```js
+function bind(fu, context) {
+  return function() {
+    return fn.apply(context, arguments)
+  }
+}
+```
+
+es5 已经原生实现了 bind()
+
+
 chapter 23
 离线应用与客户端存储
 {
@@ -73,3 +100,4 @@ chapter 25
 {
 
 }
+````
