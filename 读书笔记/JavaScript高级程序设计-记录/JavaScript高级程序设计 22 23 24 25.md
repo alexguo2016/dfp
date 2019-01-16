@@ -73,7 +73,7 @@ return new PG(sides)
 创建一个函数, 可以在特定的 this 环境中以指定参数调用另一个函数, 一般和回调函数与时间处理程序一起使用
 
 ```js
-function bind(fu, context) {
+function bind(fn, context) {
   return function() {
     return fn.apply(context, arguments)
   }
@@ -81,6 +81,38 @@ function bind(fu, context) {
 ```
 
 es5 已经原生实现了 bind()
+
+### 函数柯里化
+
+函数柯里化的基本方法和函数绑定是一样的: 使用 一个闭包返回一个函数
+创建柯里化函数的通用方式:
+```js
+function curry(fn) {
+  var args = Array.prototype.slice.call(arguments, 1)
+  return function() {
+    var innerArgs = Array.prototype.slice.call(arguments)
+    var finalArgs = args.concat(innerArgs)
+    return fn.apply(null, finalArgs)
+  }
+}
+```
+
+## 防篡改对象
+
+es5的一些新方法, 需要注意, 一旦定义为防篡改对象, 就无法撤销了
+
+### 不可扩展对象, Object.preventExtensions(xxx)
+这样操作之后, xxx对象就不能被增加属性了, 可以使用 Object.isExtensible(xxx)来判断
+
+### 密封的对象, seled object, 对象不可扩展
+有成员的Configruable特性被设置为false, 不能删除属性和方法, 不能使用Object.defineProperty()把数据属性修改为访问器属性, 但是属性值可以修改.
+要密封对象, 可以使用Object.seal()方法
+
+### 冻结的对象, Object.freeze(xxx), 既是密封的, 也是不可扩展的, 对象的数据属性Writable特性会设置为false, 如果有定义set函数, 访问器属性仍然是可写的.
+
+## 高级定时器
+
+
 
 
 chapter 23
