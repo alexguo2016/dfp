@@ -220,4 +220,82 @@ js 中, 闭包无处不在, 我们只需要能够识别并拥抱它.
 
 #### 实质问题
 
-当函数可以记住并且访问所在的词法作用域时, 就产生了闭包.
+当函数可以记住并且访问所在的词法作用域时, 就产生了闭包, 函数是在当前词法作用域之外执行的.
+
+```js
+function foo() {
+  var a = 2;
+  function bar() {
+    console.log(a);
+  }
+  return bar;
+}
+var baz = foo();
+baz(); // 2, 闭包
+```
+
+foo()返回的其实是 bar 函数, baz 其实是 bar 函数的一个引用, baz()这样调用的时候, 相当于 bar(), 但是, 需要特别注意的是, bar 的词法作用域是在 foo 里面的, 现在由于有一个 baz 引用它, 它可以在 baz 所在的词法作用域发挥作用, 而且不会被垃圾回收程序回收.
+
+闭包使得函数可以继续访问定义时的词法作用域.
+
+22:40-23:21
+p45-50
+
+```js
+var fn;
+function foo() {
+  var a = 2;
+  function baz() {
+    console.log(a);
+  }
+  fn = baz;
+}
+
+function bar() {
+  fn(); // 闭包
+}
+
+foo();
+bar(); // 2
+```
+
+#### 理解闭包
+
+```js
+function wait(message) {
+  setTimeout(function timer() {
+    console.log(message);
+  }, 1000);
+}
+// 这个就是闭包
+```
+
+只要使用了回调函数, 实际上就是使用了闭包.
+
+#### 循环和闭包
+
+```js
+for (var i = 1; i <= 5; i++) {
+  setTimeout(function timer() {
+    console.log(i);
+  }, i * 1000);
+}
+
+for (var i = 1; i <= 5; i++) {
+  (function() {
+    setTimeout(function timer() {
+      console.log(i);
+    }, i * 1000);
+  })();
+}
+// 这里的IIFE只是一个什么都没有的作用域, 最后引用的i, 仍然是6
+
+for (var i = 1; i <= 5; i++) {
+  (function() {
+    var j = i;
+    setTimeout(function timer() {
+      console.log(j);
+    }, j * 1000);
+  })();
+}
+```
