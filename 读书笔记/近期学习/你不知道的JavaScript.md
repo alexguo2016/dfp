@@ -742,7 +742,7 @@ new 绑定比隐式绑定优先级高
 new 每次都是一个新对象, 这个需要注意
 new 中其实使用了硬绑定.
 
-所以, 优先级是 new > 显示绑定 > 隐式绑定 > 默认绑定
+所以, 优先级是 new > 显式绑定 > 隐式绑定 > 默认绑定
 
 #### 绑定例外
 
@@ -806,3 +806,111 @@ this 词法和 this 风格, 最好二选一
 
 1. 只使用词法作用域风格, 不适用 this 风格, 例如使用 self = this 和箭头函数
 2. 完全使用 this 风格, 只在必要的时候使用 bind()来改变 this 的绑定, 不使用 self = this 和箭头函数
+
+13:23--13:47--14:40
+
+p102--136
+
+### 第三章 对象
+
+对象究竟是什么?
+
+#### 语法
+
+1. 字面量形式
+2. 构造形式
+
+一般而言, 字面量形式用得比较多, 而且比较方便
+
+#### 类型
+
+六种基础类型, string, number, boolean, null, undefined, object
+
+#### 内容
+
+1. 点语法, 一般称为“属性访问”
+2. 中括号语法, “键访问”
+
+es6 新增的, 中括号语法里面, 可以是可计算的 js 表达式.
+
+属性访问和方法访问.
+
+数组, 特殊的对象, 有自己特有的方法.
+
+对象的复制. 请注意, 赋值对象, 其实只是将对象的引用地址复制过去了, 并没有复制对象.
+如果真的需要复制, 那么可以使用 JSON.parse(JSON.stringify(obj))来复制.
+Object.assign()则可以用于浅复制.
+
+属性描述符. Writable 之类的.
+可以使用 Object.defineProperty(obj, 'xx', {})来定义.
+... 后面是和红宝书和犀牛书差不多的内容, 省略.
+
+#### 遍历
+
+for...in 循环, for..of 循环
+
+数组的辅助迭代器, forEach(), every(), some()
+...(后面的内容涉及 es6 的迭代器, 暂时没看)
+
+### 第四章 混合对象 “类”
+
+类是一种设计模式.
+类意味着复制.
+总的来说, 在 js 中模拟类是得不偿失的.
+
+#### 类的理论
+
+类 / 继承, 描述了一种代码的组织结构形式, 一直在软件中对真实世界中的问题领域的建模方法.
+
+面向对象编程, 强调的是数据和操作数据的行为, 本质上是互相关联的, 所以把数据和它相关的行为打包起来--数据结构.
+
+##### “类”设计模式
+
+##### js 中的“类”
+
+es6 之后, 有一个 class 关键字, 但是, js 实际上并没有类, js 提供了一些近似类的语法.
+
+#### 类的机制
+
+一个类就是一张蓝图.
+
+#### 类的继承
+
+#### 混入
+
+有显式混入和隐式混入. 用于模拟类的复制行为.
+
+##### 显式混入
+
+```js
+function mixin(sourceObj, targetObj) {
+  for (var key in sourceObj) {
+    if (!(key in targetObj)) {
+      targetObj[key] = sourceObj[key];
+    }
+  }
+  return targetObj;
+}
+var Vehicle = {
+  engines: 1,
+  ignition: function() {
+    console.log("Turning on my engine.");
+  },
+  drive: function() {
+    this.ignition();
+    console.log("Steering and moving forward!");
+  }
+};
+var Car = mixin(Vehicle, {
+  wheels: 4,
+  drive: function() {
+    Vehicle.drive.call(this); // 显式多态
+    console.log(`Rolling on all ${this.wheels} wheels!`);
+  }
+});
+```
+
+和 Object.assign()是完全不同的东西, 这里有继承的概念在.
+
+15:59--
+p137-
