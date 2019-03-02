@@ -136,3 +136,138 @@ thenable 的函数(或者对象)都会被认为是 instanceof Promise 的.
 #### promise 的信任问题
 
 和使用回调函数相比, promise 有类似的信任问题吗? 例如调用次数, 时机, 参数和环境的传递, 错误和异常处理等等问题.
+
+使用 Promise.resolve(), 如果里面是一个 Promise, 则直接返回, 如果不是, 则会返回一个包装的 Promise 值.
+
+#### 链式流
+
+我们可以把多个 Promise 连接在一起, 表示一系列异步步骤.
+
+```js
+var p = Promise.resolve(42);
+var p2 = p.then(function(v) {
+  console.log(v); // 42
+  return v * 2;
+});
+p2.then(function(v) {
+  console.log(v); // 84
+});
+
+var p = Promise.resolve(42);
+p.then(function(v) {
+  console.log(v); // 42
+  return v * 2; // 甚至可以没有return一个promise对象, 或者是异步操作, 后续的程序也会正常运行
+  // 每个then里面, 都会隐式返回一个后续的promise决议, 被后一个then使用
+}).then(function(v) {
+  console.log(v); // 84
+});
+```
+
+```js
+function delay(time) {
+  return new Promise(function(resolve, reject) {
+    setTimeout(resolve, time);
+  });
+}
+
+delay(1000)
+  .then(function step1() {
+    console.log("step1");
+    return delay(500);
+  })
+  .then(function step2() {
+    console.log("step 2");
+    return delay(2000);
+  })
+  .then(function step3() {
+    console.log("delay 2000");
+    return Promise.resolve(233);
+  });
+```
+
+使得链式控制流可行的 Promise 固有特性:
+
+1. 调用 promise 的 then(...)会自动创建一个新的 promise, 从调用返回
+2. 在完成或拒绝处理函数内部, 如果返回一个值或者抛出一个异常, 新返回的(可链接的)promise 就响应地决议
+3. 如果完成或者拒绝处理函数返回一个 promise, 它将会被展开, 这样, 不管它的决议值是什么, 都会成为当前 then(...)返回的链接 promise 的决议值
+
+Promise 的一些术语: 决议, 完成以及拒绝.
+需要注意的是, reject()不会像 resolve()一样对里面的内容进行展开, 只会原封不动地传值.
+
+#### 错误处理
+
+try/catch 是同步的, 无法检测异步错误. 使用 error-first 风格的代码可以处理异步错误, 但是 promise 使用的是不同的方案: “分离回调”--一个回调用于完成情况, 一个回调用于拒绝情况.
+
+```js
+var p = Promise.resolve(42);
+p.then(
+  function fulfilled(msg) {
+    console.log(msg.toLowerCase());
+  },
+  function rejected(err) {
+    console.log(err); // 不会执行这个, 因为promise已经被42填充了, 是不可变的, 如果需要通知这个错误, 只能通过上一个then中return出来
+  }
+).catch(err => {
+  console.log(err);
+});
+```
+
+##### 绝望的陷阱, 编程的时候, 需要努力, 才能够达到预想的结果
+
+不能仅仅在 promise 最后加一个 catch 就以为可以将所有错误捕捉了, 如果 catch 的函数也发生错误, 这个就无法被捕捉了.
+解决这个问题, 可以在全局设置一个处理“全局未处理拒绝”的处理函数, 或者在 promise 后面增加一个表示这个 promise 被正常执行的 done 函数(但这个不是 es6 的标准, 需要自己写).
+
+##### 成功的坑, 编程的时候, 需要努力, 才可能发生错误(暂时只是理论上的)
+
+1. 默认情况下, promise 在下一个任务或者 tick 上面, 向开发者终端报告所有的拒绝, 如果在这个时间点上, 该 promise 上还没有注册错误处理函数的话
+2. 如果想要一个被拒绝的 promise 在查看之前的某个时间段内保持拒绝状态, 可以调用 defer(), 这个函数优先级高于该 promise 的自动错误报告.
+
+也就是说, 除非编程人员特意将错误保留, 否则, 错误都会被上报到开发者终端(默认的).
+
+#### promise 模式
+
+除了之前的链式(顺序)模式之外, promise 还有其他的使用模式.
+
+##### Promise.all[a, b], 其中 a 和 b 都是异步, 需要它们都执行完成之后, 才会进行 then
+
+a 和 b 都是 promise 实例, 它们的完成顺序是不一定的, 不过, 一定需要都完成的情况下, then 才可以被执行.
+如果传的是空数组, 则马上 then
+
+##### Promise.race([a, b]), 只响应第一个完成的, 在 promise 中被称为“竞态”
+
+```js
+function delay(time) {
+  return new Promise(function(resolve, reject) {
+    console.log("time", time);
+    setTimeout(resolve, time);
+  });
+}
+
+var a = delay(500);
+var b = delay(1000);
+
+Promise.race([a, b]).then(res => {
+  console.log(res);
+});
+```
+
+使用的时候需要注意, 不能传空数组, 不然会一直挂起.
+其他 all 和 race 的变体以及 promise 的迭代使用, 暂时应该用不到.
+
+#### Promise API
+
+这是原生的, 其他 promise 库不在这里说明.
+
+1. new Promise()构造器
+2. Promise.resolve()和 Promise.reject()
+3. then()和 catch()
+4. Promise.all([...])和 Promise.race([...])
+
+#### Promise 的局限性
+
+1. 顺序错误处理.
+2. 单一值. 如果需要处理多个值的时候, 不妨试试 Promise.all([...])
+3. 单决议. 由于 promise 的特点, 如果用在事件或者数据流的时候, 这个时候需要多个值, 除非在 promise 上面构建显著的多值抽象, 否则, 无法合适地工作.
+4. 惯性. 如果旧代码使用的是回调风格, 除非全部代码大修, 不然使用 Promise 风格比起继续使用旧风格更加累. promise 和回调函数是两种不同的范式, 需要刻意改变. 一般来说, 需要自己手动写一个“包裹函数”, 将回调的响应封装成一个 promise.
+5. 无法取消的 Promise. 一旦创建了一个 Promise 并为其注册了完成或者拒绝处理函数, 如果由于某个原因, 这个 promise 一直 pending 的话, 我们是没有办法从外部停止它的进程的.
+6. 性能, 和纯回调函数相比, 我们做了控制反转的反转, 更多的工作, 更多的保护, 自然会慢一些. 而且 Promise 把一切都变成异步了, 一些本来可以同步的操作也变成异步操作, 一个 tick 的差别. 所以, 如果有需要, 识别出关键部分, 对它们进行 Promise, 提高可信性, 才是比较合适的做法.
