@@ -1,8 +1,18 @@
 # 你不知道的 JavaScript 中卷
 
+解决 js 中的阿喀琉斯之踵, 例如回调以及数据转换等等.
+
 ## 第一部分 类型和语法
 
 可能这部分的东西比较琐碎...
+
+判断是否相等使用的极小值, es6 开始可以使用 Number.EPSILON, 一般是 2 的负 52 次方.
+整数有安全范围, 一般是 2 的 53 次方-1, es6 中, 被定义为 Number.MAX_SAFE_INTEGER, 最小整数则是 Number.MIN_SAFE_INTEGER.
+判断是否整数, 可以使用 es6 的 Number.isInteger(..).
+永远不要重新定义 undefined.
+NaN, 应该理解为“无效数值”或者“坏数值”, NaN != NaN --> true.
+-0 只可能在除法或者乘法出现, 例如 var a = 0 / -3 --> -0.
+花括弧代码块, 有一个隐含的 return, 就是最后一个语句的结果值.
 
 ### 第一章 类型
 
@@ -339,6 +349,62 @@ it2.next(val1 / 4);
 
 #### 生成器产生值
 
-##### 生成器与迭代器
+##### 生产者与迭代器
 
 迭代器需要有一个可以记住状态的值, 可以使用闭包来实现.
+
+```js
+var something = (function() {
+  var nextVal;
+  return {
+    [Symbol.iterator]: function() {
+      return this;
+    },
+    next: function() {
+      if (nextVal === undefined) {
+        nextVal = 1;
+      } else {
+        nextVal = 3 * nextVal + 6;
+      }
+      return {
+        done: false,
+        value: nextVal
+      };
+    }
+  };
+})();
+```
+
+使用 for..of 可以使用它默认的迭代器, 而像 array 等等也有自己的默认迭代器.
+
+##### iterable, 就是对象有一个 next()接口, 可以迭代输出
+
+必须支持一个函数, 其名称是专门的 es6 符号值 Symbol.iterator, 调用这个函数的时候, 会返回一个迭代器, 通常每次调用会返回一个全新的迭代器.
+
+##### 生成器迭代器
+
+生成器本身并不是 iterable 的, 可是, 当执行一个生成器, 就得到了一个迭代器.
+
+```js
+function* something() {
+  var nextVal;
+  while (true) {
+    if (nextVal === undefined) {
+      nextVal = 1;
+    } else {
+      nextVal = nextVal * 3;
+    }
+    yield nextVal; // 发出yield, 暂停运行, 保存状态
+  }
+}
+var it = something();
+it.next().value;
+```
+
+上面的代码达到了闭包的用法--保存状态!
+
+#### 异步迭代生成器
+
+#### 生成器和 promise
+
+获得 promise 和生成器最大效用的方法就是 yield 出来一个 promise, 然后通过这个 promise 来控制生成器的迭代器.
