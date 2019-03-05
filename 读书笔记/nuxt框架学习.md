@@ -1,4 +1,4 @@
-### nuxt.js 是一个给予 Vue.js 的通用应用框架
+### nuxt.js 是一个基于 Vue.js 的通用应用框架
 
 主要关注的是应用的 UI 渲染
 nuxt generate, 基于 vue.js 的应用提供生成对应的静态站点的功能, 这个功能, 是向开发微服务的 web 应用的一个帮助
