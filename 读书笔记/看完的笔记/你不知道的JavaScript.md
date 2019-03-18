@@ -136,7 +136,8 @@ p21--36
 如果在 function 中 var 再次定义全局作用域中的变量, 会“污染”全局作用域中的变量, 解决方法是使用立即执行函数表达式, 例如
 
 ```js
-var a = 2(function foo() {
+var a = 2;
+(function foo() {
   var a = 3;
   console.log(a); // 3
 })();
