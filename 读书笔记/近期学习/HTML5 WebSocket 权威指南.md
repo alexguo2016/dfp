@@ -115,6 +115,14 @@ WebSocket 时一种自然的全双工, 双向, 单套接字连接.
 
 ## 第三章 WebSocket 协议
 
+### WebSocket 协议之前
+
+### WebSocket 协议简介
+
+### WebSocket 协议
+
+### 用 Node.js 编写 Javascript WebSocket 服务器
+
 ## 第四章 用 XMPP 构建 WebSocket 上的即时消息和聊天
 
 ## 第五章 用 STOMP 通过 WebSocket 传递消息
