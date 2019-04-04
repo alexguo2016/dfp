@@ -117,9 +117,23 @@ WebSocket 时一种自然的全双工, 双向, 单套接字连接.
 
 ### WebSocket 协议之前
 
+互联网主机之间采用的是 TCP/IP 通信, 一旦 TCP 连接建立, 两台主机都可以在任何时候发送数据.
+HTTP 的局限性, 浏览器和服务器端之间的寻址是不对称的, 服务器端无法主动发送消息, 所以不能进行全双工通信.
+Comet 实际上是模拟了 TCP 的一些功能
+
 ### WebSocket 协议简介
 
+现代的 Web 应用常常需要双向通信, 全双工才更加适合这个需求.
+WebSocket 是传输层协议.
+
 ### WebSocket 协议
+
+1. websocket 初始握手, 每个 websocket 连接都始于一个 http 请求, 它和其他请求相似, 但是包含一个特殊的首标-upgrade, 表示客户端将把连接升级到不同的协议--websocket. 除非服务器响应 101 代码, Upgrade 首标和 Sec-WebSocket-Accept 首标, 否则 websocket 连接不能成功.
+2. 计算响应键值.
+3. 消息格式, 客户端和服务器端的消息--“帧”. websocket 只允许 utf-8 编码.
+4. 屏蔽, 其目的不是阻止窃听, 而是为了 HTTP 的兼容性考虑.
+5. 多帧消息. 帧格式中的 fin 位, 考虑了多帧消息或者部分可用消息的流化.
+6. websocket 关闭握手.
 
 ### 用 Node.js 编写 Javascript WebSocket 服务器
 
