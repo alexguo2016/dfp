@@ -139,6 +139,14 @@ WebSocket 是传输层协议.
 
 ## 第四章 用 XMPP 构建 WebSocket 上的即时消息和聊天
 
+### 分层协议
+
+### XMPP: XML 的流化
+
+### 通过 websocket 构建聊天和即时消息应用程序
+
+### 构建的扩展
+
 ## 第五章 用 STOMP 通过 WebSocket 传递消息
 
 ## 第六章 用远程帧缓冲协议实现 VNC
