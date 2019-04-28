@@ -967,6 +967,30 @@ constructor 并不表示被构造
 
 js 中的[[Prototype]]机制的本质就是对象之间的关联关系.
 
+#### 类 理论
+
+类设计模式就是在继承的时候重写和多态, 许多行为先抽象到父类, 然后子类进行特殊化(重写).
+
+### 委托理论, 对象不是按照父类到子类的关系垂直组织的, 而是通过任意方向的委托关联并排组织的
+
+定义一个为 Task 的对象(既不是类, 也不是函数), 会包含所有任务都可以使用(委托)的具体行为. 每个任务都会定义一个对象来存储对应的的数据和行为. 我们可以将特定的任务对象都关联到 Task 功能对象中, 在有需要的时候进行委托.
+可以使用 Object.create(xx)来实现委托, 其实就是“原型链继承”??
+
+```js
+var Task = {
+  sayName: function(name) {
+    console.log(name);
+  }
+};
+var client = Object.create(Task);
+client.letSayName = function(name) {
+  this.sayName(name);
+};
+client.letSayName("alex");
+```
+
+两种理论的不同, 可能是类理论基于“类”, 委托理论基于“方法”? “联系”?
+
 #### 面向委托的设计
 
 委托, 如字面的意思, 就是将一部分的方法或者属性 link 到其他对象上面, 让它们来做.
@@ -988,6 +1012,78 @@ js 中的[[Prototype]]机制的本质就是对象之间的关联关系.
 
 #### 类与对象
 
+使用 es6 的 class 语法糖来实现类以及继承, 看起来比较容易理解, 但是, 其实还是使用了 prototype 等等实现, “思维模式不匹配, 带来一系列问题”.
+
+使用委托风格来简单实现“控件-button”
+
+```js
+var Widget = {
+  init: function(width, height) {
+    this.width = width || 50;
+    this.height = height || 50;
+    this.$elem = null;
+  },
+  insert: function($where) {
+    if (this.$elem) {
+      this.$elem
+        .css({
+          width: this.width + "px",
+          height: this.height + "px"
+        })
+        .appendTo($where);
+    }
+  }
+};
+
+var Button = Object.create(Widget);
+
+Button.setup = function(width, height, label) {
+  // 委托调用
+  this.init(width, height);
+  this.label = label || "Default";
+  this.$elem = $("<button>").text(this.label);
+};
+Button.build = function() {
+  // 委托调用
+  this.insert($where);
+  this.$elem.click(this.onClick.bind(this));
+};
+Button.onClick = function(event) {
+  console.log("button " + this.label + "'clicked!'");
+};
+```
+
+对象关联可以更好地支持关注分离原则, 创建和初始化并不需要合并为一个步骤.
+
 #### 更简洁的设计
 
+对象关联还可以通过行为委托模式来简化代码结构, 代码的整体设计.
+类设计的例子: 登录和验证操作, 都继承自 controler, 都有自己的 success 和 failure 操作(重写 controler 的方法), 而他们之间的相互通信, 则需要使用合成.例如:
+
+```js
+auth.checkAuth(new LoginController());
+```
+
+而使用对象关联, 可以简单地向委托链上添加一个或多个对象, 而且不需要实力化. 不需要 controler 基类来共享两个实体之间的行为.
+
 #### 更好的语法
+
+es6 有一个方法, 可以方便地修改 Prototype, Object.setPrototypeOf(...)
+
+```js
+Object.setPrototypeOf(originObject, targetObject);
+
+var a = {
+  func() {}, // 这种简洁写法有一个问题, 就是递归或者调用自身的时候, 不能很好地调用
+  funcb: funcb(x) {
+    if (x < 10) {
+      return funcb(x * 2)
+    }
+    return x
+  }, // 这样的写法则可以很好地调用自身
+}
+```
+
+#### 内省
+
+就是反射, instanceof 等等
